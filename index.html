@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechParts - Mua Bán Linh Kiện Cũ</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOADING BAR -->
+<div class="loading-bar" id="loadingBar"></div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle toast-icon"></i>
+  <span class="toast-text" id="toastText">Đã thêm vào giỏ hàng!</span>
+</div>
+
+<!-- ========================
+     MODAL - PRODUCT DETAIL
+======================== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="productModal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    <div class="modal-grid">
+      <div class="modal-img" id="modalImg">💻</div>
+      <div class="modal-content">
+        <div class="product-category" id="modalCat">CPU</div>
+        <h2 id="modalName">Tên sản phẩm</h2>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem;">
+          <span style="color:var(--warning); font-size:0.85rem;">★★★★☆</span>
+          <span style="font-size:0.78rem; color:var(--text-muted);">(24 đánh giá)</span>
+        </div>
+        <div class="modal-price" id="modalPrice">0₫</div>
+        <div class="modal-specs" id="modalSpecs"></div>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.7;" id="modalDesc"></p>
+        <div class="modal-actions">
+          <button class="btn-buy" onclick="buyNow()"><i class="fas fa-bolt"></i> Mua ngay</button>
+          <button class="btn-cart-lg" onclick="addToCartModal()"><i class="fas fa-shopping-cart"></i> Thêm giỏ</button>
+        </div>
+        <div style="display:flex; gap:1.5rem; margin-top:1rem; font-size:0.78rem; color:var(--text-muted);">
+          <span><i class="fas fa-shield-alt" style="color:var(--success); margin-right:0.3rem;"></i>Kiểm tra kỹ</span>
+          <span><i class="fas fa-undo"       style="color:var(--accent);  margin-right:0.3rem;"></i>Đổi trong 7 ngày</span>
+          <span><i class="fas fa-truck"      style="color:var(--accent2); margin-right:0.3rem;"></i>Giao toàn quốc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     HEADER
+======================== -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">Tech<span>Parts</span></a>
+
+    <div class="search-bar">
+      <input type="text" placeholder="Tìm kiếm CPU, RAM, GPU, Mainboard..." id="searchInput">
+      <button onclick="handleSearch()"><i class="fas fa-search"></i></button>
+    </div>
+
+    <nav>
+      <a href="#" class="active">Trang chủ</a>
+      <a href="shop.html">Mua hàng</a>
+      <a href="sell.html">Bán hàng</a>
+      <a href="lien-he.html">Liên hệ</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="cart-btn" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <div id="authButtons">
+        <a href="login.html" class="btn-outline">Đăng nhập</a>
+        <a href="login.html?tab=register" class="btn-primary">Đăng ký</a>
+      </div>
+      <div id="userMenu" style="display:none; align-items:center; gap:0.8rem;">
+        <div style="display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0.9rem; background:rgba(0,212,255,0.08); border:1px solid var(--border); border-radius:8px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:var(--accent3); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:white;" id="userAvatar">U</div>
+          <span style="font-size:0.88rem; font-weight:600;" id="userName">User</span>
+        </div>
+        <button onclick="logout()" style="padding:0.45rem 1rem; border:1px solid rgba(239,68,68,0.5); border-radius:6px; background:none; color:#ef4444; font-family:inherit; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='none'">
+          <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========================
+     HERO
+======================== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-badge"><i class="fas fa-bolt"></i> Nền tảng #1 linh kiện cũ tại Việt Nam</div>
+      <h1>Mua Bán <span class="highlight">Linh Kiện Cũ</span> Chất Lượng &amp; Uy Tín</h1>
+      <p>Hệ thống giao dịch linh kiện máy tính đã qua sử dụng với quy trình kiểm tra nghiêm ngặt. Tiết kiệm đến 70% so với hàng mới, đảm bảo hoạt động tốt.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-primary" onclick="scrollToProducts()"><i class="fas fa-search"></i> Khám phá ngay</button>
+        <button class="btn-hero-secondary"><i class="fas fa-store"></i> Đăng bán miễn phí</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><h3>12K+</h3><p>Sản phẩm</p></div>
+        <div class="stat-item"><h3>8.5K+</h3><p>Người bán</p></div>
+        <div class="stat-item"><h3>50K+</h3><p>Giao dịch</p></div>
+        <div class="stat-item"><h3>99%</h3><p>Hài lòng</p></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hcard-icon blue"><i class="fas fa-microchip"></i></div>
+        <h4>CPU Đã Kiểm Tra</h4>
+        <p>Intel, AMD chính hãng, test benchmark đầy đủ</p>
+      </div>
+      <div class="hero-card">
+        <div class="hcard-icon orange"><i class="fas fa-memory"></i></div>
+        <h4>RAM Chất Lượng</h4>
+        <p>DDR4, DDR5 từ các thương hiệu uy tín</p>
+      </div>
+      <div class="hero-card">
+        <div class="hcard-icon purple"><i class="fas fa-tv"></i></div>
+        <h4>GPU Gaming</h4>
+        <p>RTX, RX series giá tốt, còn bảo hành</p>
+      </div>
+      <div class="hero-card">
+        <div class="hcard-icon green"><i class="fas fa-shield-alt"></i></div>
+        <h4>Bảo Hành 3-6 Tháng</h4>
+        <p>Đổi trả trong 7 ngày nếu có vấn đề</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================
+     CATEGORIES
+======================== -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Danh Mục <span>Sản Phẩm</span></div>
+        <div class="section-sub">Tìm kiếm theo loại linh kiện bạn cần</div>
+      </div>
+      <a href="#" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="categories-grid">
+      <a href="#" class="cat-card" onclick="filterCategory('CPU')">
+        <span class="cat-icon">🔲</span><h4>CPU</h4><p>1.240 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('RAM')">
+        <span class="cat-icon">🧩</span><h4>RAM</h4><p>980 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('GPU')">
+        <span class="cat-icon">🖥️</span><h4>Card màn hình</h4><p>756 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('Mainboard')">
+        <span class="cat-icon">🔌</span><h4>Mainboard</h4><p>623 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('SSD')">
+        <span class="cat-icon">💾</span><h4>SSD / HDD</h4><p>1.120 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('Nguồn')">
+        <span class="cat-icon">⚡</span><h4>Nguồn</h4><p>445 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('Case')">
+        <span class="cat-icon">🗃️</span><h4>Case / Vỏ máy</h4><p>378 sp</p>
+      </a>
+      <a href="#" class="cat-card" onclick="filterCategory('Tản nhiệt')">
+        <span class="cat-icon">❄️</span><h4>Tản nhiệt</h4><p>290 sp</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================
+     BANNER + FLASH SALE
+======================== -->
+<div class="banner-section">
+  <div class="banner-grid">
+    <div class="banner-main">
+      <div class="hero-badge" style="margin-bottom:1rem;"><i class="fas fa-fire"></i> Flash Sale hôm nay</div>
+      <h2>Giảm Đến <span>70%</span><br>Linh Kiện Hot</h2>
+      <p>Hàng nghìn linh kiện chất lượng cao, giá cực tốt. Kết thúc sau:</p>
+      <div class="countdown">
+        <div class="cd-item"><span class="cd-num" id="cdHour">00</span><span class="cd-label">Giờ</span></div>
+        <div class="cd-item" style="padding-top:0.5rem; font-size:1.5rem; color:var(--text-muted);">:</div>
+        <div class="cd-item"><span class="cd-num" id="cdMin">00</span><span class="cd-label">Phút</span></div>
+        <div class="cd-item" style="padding-top:0.5rem; font-size:1.5rem; color:var(--text-muted);">:</div>
+        <div class="cd-item"><span class="cd-num" id="cdSec">00</span><span class="cd-label">Giây</span></div>
+      </div>
+      <button class="btn-hero-primary" onclick="scrollToProducts()"><i class="fas fa-bolt"></i> Mua ngay</button>
+    </div>
+    <div class="banner-side">
+      <div class="banner-small purple">
+        <h3>🎯 Bán Linh Kiện Cũ</h3>
+        <p>Đăng bán miễn phí, tiếp cận hàng nghìn người mua</p>
+        <button class="btn-sm purple">Đăng bán ngay</button>
+      </div>
+      <div class="banner-small orange">
+        <h3>🔧 Dịch Vụ Kiểm Tra</h3>
+        <p>Kiểm tra linh kiện chuyên nghiệp trước khi giao dịch</p>
+        <button class="btn-sm orange">Tìm hiểu thêm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     FILTER BAR
+======================== -->
+<div class="filter-section">
+  <div class="filter-inner">
+    <div class="filter-bar">
+      <span class="filter-label">Lọc:</span>
+      <span class="filter-chip active" onclick="setFilter(this, 'all')">Tất cả</span>
+      <span class="filter-chip" onclick="setFilter(this, 'hot')">🔥 Nổi bật</span>
+      <span class="filter-chip" onclick="setFilter(this, 'new')">✨ Mới đăng</span>
+      <span class="filter-chip" onclick="setFilter(this, 'sale')">🏷️ Giảm giá</span>
+      <span class="filter-chip" onclick="setFilter(this, 'verified')">✅ Đã kiểm tra</span>
+      <select class="filter-select" onchange="sortProducts(this.value)">
+        <option value="">Sắp xếp theo</option>
+        <option value="price-asc">Giá tăng dần</option>
+        <option value="price-desc">Giá giảm dần</option>
+        <option value="newest">Mới nhất</option>
+        <option value="popular">Phổ biến nhất</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ========================
+     PRODUCTS GRID
+======================== -->
+<section class="section" id="productsSection">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Sản Phẩm <span>Nổi Bật</span></div>
+        <div class="section-sub" id="productCount">Hiển thị 8 / 1.240 sản phẩm</div>
+      </div>
+      <a href="#" class="view-all">Xem thêm <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ========================
+     HOW TO SELL
+======================== -->
+<section class="seller-section">
+  <div class="section-inner">
+    <div class="section-header" style="margin-bottom:2.5rem;">
+      <div>
+        <div class="section-title">Bán Hàng <span>Dễ Dàng</span></div>
+        <div class="section-sub">Quy trình đăng bán linh kiện cũ chỉ 4 bước đơn giản</div>
+      </div>
+    </div>
+    <div class="seller-steps">
+      <div class="step-card">
+        <div class="step-icon">📝</div>
+        <div class="step-num">01</div>
+        <h4>Đăng ký tài khoản</h4>
+        <p>Tạo tài khoản miễn phí và xác minh thông tin người bán trong vòng 5 phút.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">📸</div>
+        <div class="step-num">02</div>
+        <h4>Chụp ảnh &amp; Mô tả</h4>
+        <p>Chụp ảnh rõ ràng, mô tả chi tiết tình trạng linh kiện và đặt giá mong muốn.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🔍</div>
+        <div class="step-num">03</div>
+        <h4>Kiểm duyệt &amp; Đăng</h4>
+        <p>Hệ thống kiểm duyệt trong 2–4 giờ. Sau đó sản phẩm hiển thị cho hàng nghìn người mua.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">💰</div>
+        <div class="step-num">04</div>
+        <h4>Nhận tiền an toàn</h4>
+        <p>Thanh toán qua ví điện tử, ngân hàng. Tiền về tài khoản trong 24 giờ sau giao dịch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================
+     FOOTER
+======================== -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="logo">Tech<span>Parts</span></a>
+      <p>Nền tảng mua bán linh kiện máy tính cũ uy tín hàng đầu Việt Nam. Kết nối người bán và người mua trực tiếp, an toàn và tiết kiệm.</p>
+      <div class="social-links">
+        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Danh mục</h5>
+      <ul>
+        <li><a href="#">CPU / Bộ xử lý</a></li>
+        <li><a href="#">RAM / Bộ nhớ</a></li>
+        <li><a href="#">Card màn hình</a></li>
+        <li><a href="#">Mainboard</a></li>
+        <li><a href="#">SSD / HDD</a></li>
+        <li><a href="#">Nguồn máy tính</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Hỗ trợ</h5>
+      <ul>
+        <li><a href="#">Hướng dẫn mua</a></li>
+        <li><a href="#">Hướng dẫn bán</a></li>
+        <li><a href="#">Chính sách đổi trả</a></li>
+        <li><a href="#">Thanh toán</a></li>
+        <li><a href="#">Vận chuyển</a></li>
+        <li><a href="#">Liên hệ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Công ty</h5>
+      <ul>
+        <li><a href="lien-he.html">Liên hệ</a></li>
+        <li><a href="#">Tuyển dụng</a></li>
+        <li><a href="#">Điều khoản sử dụng</a></li>
+        <li><a href="#">Chính sách bảo mật</a></li>
+        <li><a href="#">Blog kỹ thuật</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 TechParts. Bảo lưu mọi quyền.</span>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <span><i class="fas fa-map-marker-alt" style="margin-right:0.3rem; color:var(--accent);"></i>TP. Hồ Chí Minh, Việt Nam</span>
+      <span><i class="fas fa-phone" style="margin-right:0.3rem; color:var(--accent);"></i>0800 123 456</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Custom JS (đặt cuối body để DOM load trước) -->
+<script src="main.js"></script>
+
+</body>
+</html>
